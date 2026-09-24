@@ -1,2 +1,1 @@
-# dmu_student1
-Pre-Diabetes Risk Calculator
+# DMU-Pre-Diabetes-Risk-Calculator
