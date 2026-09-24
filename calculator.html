@@ -283,15 +283,19 @@
                 desc.textContent = 'Your results suggest fewer common risk factors for pre-diabetes at this time. Continuing healthy lifestyle practices including routine physical activity and balanced nutrition will help keep your risk low.';
             }
 
+            const suggestions = totalScore >= 5
+                ? "Elevated Risk: Consult healthcare provider for blood glucose testing (A1C or fasting glucose); 150+ min/wk moderate activity; 5-7% weight reduction if carrying excess weight; reduce refined carbs and sugary drinks; 7-9 hours sleep and manage stress; report family history to doctor."
+                : "Lower Risk: Maintain regular movement routine (walking, cycling); diet rich in vegetables, whole grains, and lean protein; monitor waist and weight; re-screen yearly.";
+
             // Save data to Google Sheets
-            logResultToSheet(totalScore, totalScore >= 5 ? 'Elevated Risk' : 'Lower Risk');
+            logResultToSheet(totalScore, totalScore >= 5 ? 'Elevated Risk' : 'Lower Risk', suggestions);
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsDd2348hTfZoB1No65877noVYEerjE723x2LQjVlwh4LjrQEArsP77vr4wsRL3qvErw/exec';
 
-        function logResultToSheet(score, riskCategory) {
+        function logResultToSheet(score, riskCategory, suggestions) {
             const statusEl = document.getElementById('save-status');
             if (statusEl) statusEl.textContent = 'Saving research data...';
 
@@ -299,6 +303,7 @@
                 timestamp: new Date().toISOString(),
                 score: score,
                 riskCategory: riskCategory,
+                suggestions: suggestions || '',
                 age: researchDatabase.ageText || '',
                 age_points: researchDatabase.agePoints,
                 bmi: researchDatabase.calculatedBMI || '',

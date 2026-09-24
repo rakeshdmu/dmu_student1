@@ -706,8 +706,12 @@
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    const suggestions = isElevated
+      ? "Elevated Risk: Consult healthcare provider for blood glucose testing (A1C or fasting glucose); 150+ min/wk moderate activity; 5-7% weight reduction if carrying excess weight; reduce refined carbs and sugary drinks; 7-9 hours sleep and manage stress; report family history to doctor."
+      : "Lower Risk: Maintain regular movement routine (walking, cycling); diet rich in vegetables, whole grains, and lean protein; monitor waist and weight; re-screen yearly.";
+
     // Log the full set of responses for research purposes (see section 5 below)
-    logResultToSheet(score, riskCategory, buildResponsesPayload());
+    logResultToSheet(score, riskCategory, buildResponsesPayload(), suggestions);
   }
 
   // -----------------------------------------------------------------
@@ -717,25 +721,19 @@
   // Web App URL (Deploy > New deployment > Web app, access: "Anyone").
   //
   // This page POSTs a JSON body containing every individual answer
-  // (timestamp, score, riskCategory, age, age_points, bmi, bmi_category,
-  // bmi_points, family, family_points, activity, activity_points, waist,
-  // waist_points). Your Apps Script doesn't have to use every field —
-  // the current recommended doPost() only pulls out 8 of them, into a
-  // sheet with this exact header row:
-  //   Timestamp | Score | Risk Category | Age | BMI | Family History |
-  //   Physical Activity | Waist Circumference
-  // (BMI category is folded into the BMI cell, e.g. "31.1 (Obesity)".)
-  // See the "Apps Script code" the assistant provided separately for the
-  // exact doPost() function.
+  // (timestamp, score, riskCategory, suggestions, age, age_points, bmi,
+  // bmi_category, bmi_points, family, family_points, activity, activity_points,
+  // waist, waist_points).
   const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsDd2348hTfZoB1No65877noVYEerjE723x2LQjVlwh4LjrQEArsP77vr4wsRL3qvErw/exec';
 
-  function logResultToSheet(score, riskCategory, responses) {
+  function logResultToSheet(score, riskCategory, responses, suggestions) {
     const statusEl = document.getElementById('save-status');
     const payload = Object.assign(
       {
         timestamp: new Date().toISOString(),
         score: score,
         riskCategory: riskCategory,
+        suggestions: suggestions,
       },
       responses // age, age_points, bmi, bmi_category, bmi_points, family, family_points, activity, activity_points, waist, waist_points
     );
